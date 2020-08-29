@@ -3,7 +3,7 @@ import colorful as cf
 
 
 class Card:
-    def __init__(self, color: str, number: int or None, action: str or None):
+    def __init__(self, color: str or None, number: int or None, action: str or None):
         self.color = color
         self.number = number
         self.action = action
@@ -19,7 +19,7 @@ class Card:
             text = cf.green(text)
         elif self.color == "yellow":
             text = cf.yellow(text)
-        else:
+        elif self.color == "blue":
             text = cf.blue(text)
         return text
 
@@ -38,12 +38,11 @@ class Rules:
     @staticmethod
     def actions():
         return [
-            'do_nothing',
-            'Draw 2',
             'Skip',
             'Reverse',
-            'Draw 4',
-            'Wild'
+            'Draw 2',
+            'Wild',
+            'Wild Draw 4',
         ]
 
     @staticmethod
@@ -60,9 +59,10 @@ class Rules:
 
 
 class Game:
-    def __init__(self, deck: [Card], draw_card: int, player: Player, computer: Player):
+    def __init__(self, deck: [Card], pile: [Card], top_card: int, player: Player, computer: Player):
         self.deck = deck
-        self.draw_card = draw_card
+        self.pile = pile
+        self.top_card = top_card
         self.player = player
         self.computer = computer
 
@@ -73,15 +73,28 @@ class Game:
 def get_cards(game: Game):
     for color in Rules.colors():
         for number in Rules.numbers():
-            card = Card(color=color, number=number, action=None)
+            card: Card = Card(color=color, number=number, action=None)
             game.deck.append(card)
+            if number != 0:
+                game.deck.append(card)
+
+        for action in Rules.actions():
+            action_color = color
+            if "Wild" in action:
+                action_color = None
+
+            card: Card = Card(color=action_color, number=None, action=action)
+            game.deck.append(card)
+
+            if "Wild" not in action:
+                game.deck.append(card)
 
 
 def deal_cards(game: Game):
     for card in range(0, 7):
         game.player.hand.append(game.deck[card])
         game.computer.hand.append(game.deck[card + 1])
-        game.draw_card = card + 2
+        game.top_card = card + 2
 
 
 def shuffle_cards(game: Game):
@@ -91,10 +104,10 @@ def shuffle_cards(game: Game):
 def new_game():
     return Game(
         deck=[],
-        draw_card=0,
+        pile=[],
+        top_card=0,
         player=Player(name="Player", hand=[]),
-        computer=Player(name="Computer",
-                        hand=[]))
+        computer=Player(name="Computer", hand=[]))
 
 
 def setup_game(game: Game):
@@ -106,12 +119,76 @@ def setup_game(game: Game):
 def determine_first_player(game: Game):
     players: [Player] = [game.player, game.computer]
     random.shuffle(players)
-    print(players[0].name, players[1].name)
     return players[0]
 
 
-def player_turn(game: Game):
+def valid_play(game: Game, card: Card):
+    if len(game.pile[-1]) == 0:
+        return True
+
+    last_card: Card = game.pile[-1]
+    if "Wild" in last_card.action:
+        print("It's starting to get complicated here...")
+
+
+
+def play_card(game: Game, card: Card):
     return None
+
+
+def print_hand(hand: [Card]):
+    hand_display: [str] = ""
+    for index, card in enumerate(hand):
+        hand_display += (f"{index + 1}: [" + card.__repr__() + "] ")
+    print(hand_display + "\n")
+
+
+def can_play(game: Game, hand: [Card]):
+    if len(game.pile) == 0:
+        print("First play")
+        return True
+    last_card: Card = game.pile[-1]
+    print("Last Card: [" + last_card.__repr__() + "] \n")
+    if "Wild" in [card.action for card in hand]:
+        return True
+    elif last_card.color in [card.color for card in hand]:
+        return True
+    elif last_card.number in [card.number for card in hand]:
+        return True
+    if last_card.action in [card.action for card in hand] and last_card.action is not None:
+        return True
+    else:
+        return False
+
+
+def draw_card(game: Game, player: Player):
+    top_card = game.deck[game.top_card]
+    player.hand.append(top_card)
+    game.top_card += 1
+
+
+def player_turn(game: Game):
+    done = False
+    play = False
+    while not done:
+        print_hand(game.player.hand)
+        play = can_play(game, game.player.hand)
+        if play:
+            selected_card: int = int(
+                input(f"Which card would you like to play? [Select 1 - {len(game.player.hand)}]\n"))
+            if selected_card in range(1, 8):
+                card: Card = game.player.hand[selected_card - 1]
+                if valid_play(game, card):
+                    play_card(game, card)
+                    play = True
+                    done = True
+                else:
+                    print(f"{card.__repr__()} is not a valid play. Please try again.\n")
+            else:
+                print(f"Uh oh! {selected_card} is not a valid selection.\n")
+        else:
+            enter = input("Looks like you don't have any cards you can play. Please press Enter to continue.\n")
+            draw_card(game, game.player)
 
 
 def computer_turn(game: Game):
