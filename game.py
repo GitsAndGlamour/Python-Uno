@@ -79,7 +79,7 @@ def determine_first_player(game: Game):
 
 def start_game(game: Game):
     game.active_player = determine_first_player(game)
-    print("{player} goes first".format(player=game.active_player.name))
+    print("{player} goes first!\n".format(player=game.active_player.name))
     winner = None
     while winner is None:
         winner = game.is_over()
@@ -166,6 +166,8 @@ def valid_play(game: Game, card: Card):
     if card.action is not None:
         if "Wild" in card.action:  # If Wild, choose a color set
             return True
+        elif card.action == last_card.action:
+            return True
     if last_card.action is not None:
         if "Wild" in last_card.action and card.color == game.color:
             return True
@@ -213,12 +215,12 @@ def player_turn(game: Game):
                 input(f"Which card would you like to play? [Select 1 - {len(game.player.hand)}]\n"))
             if selected_card in range(1, len(game.player.hand) + 1):
                 card: Card = game.player.hand[selected_card - 1]
-                print(card.__repr__())
+                print(f"You selected [{card.__repr__()}].\n")
                 if valid_play(game, card):
                     play_card(game, game.player, game.computer, card)
                     done = True
                 else:
-                    print(f"{card.__repr__()} is not a valid play. Please try again.\n")
+                    print(f"[{card.__repr__()}] is not a valid play. Please try again.\n")
             else:
                 print(f"Uh oh! {selected_card} is not a valid selection.\n")
         else:
