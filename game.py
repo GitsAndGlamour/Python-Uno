@@ -209,7 +209,7 @@ def player_turn(game: Game):
         if play:
             selected_card: int = int(
                 input(f"Which card would you like to play? [Select 1 - {len(game.player.hand)}]\n"))
-            if selected_card in range(1, len(game.player.hand + 1)):
+            if selected_card in range(1, len(game.player.hand) + 1):
                 card: Card = game.player.hand[selected_card - 1]
                 if valid_play(game, card):
                     play_card(game, game.player, game.computer, card)
