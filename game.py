@@ -151,17 +151,21 @@ def perform_card_action(game: Game, player: Player, opponent: Player, card: Card
                     f"2. {cf.yellow('yellow')}  "
                     f"3. {cf.green('green')}  "
                     f"4. {cf.blue('blue')} "))
+                if selected_color == 1:
+                    game.color = 'red'
+                elif selected_color == 2:
+                    game.color = 'yellow'
+                elif selected_color == 3:
+                    game.color = 'green'
+                elif selected_color == 4:
+                    game.color = 'blue'
         if selected_color == 1:
-            game.color = 'red'
             print(f"The color is {cf.red('red')}.")
         elif selected_color == 2:
-            game.color = 'yellow'
             print(f"The color is {cf.yellow('yellow')}.")
         elif selected_color == 3:
-            game.color = 'green'
             print(f"The color is {cf.green('green')}.")
         elif selected_color == 4:
-            game.color = 'blue'
             print(f"The color is {cf.blue('blue')}.")
         else:
             print(f"{selected_color} is not a valid response.\n")
