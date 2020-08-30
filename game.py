@@ -106,6 +106,8 @@ def can_play(game: Game, hand: [Card]):
     print("Last Card: [" + last_card.__repr__() + "] \n")
     if "Wild" in [card.action for card in hand]:  # Player has wild card
         return True
+    elif "Wild Draw 4" in [card.action for card in hand]:  # Player has wild card
+        return True
     elif last_card.color in [card.color for card in hand] and last_card.color is not None:  # Matching color card
         return True
     elif last_card.number in [card.number for card in hand] and last_card.number is not None:  # Matching number card
