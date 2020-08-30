@@ -1,8 +1,6 @@
 import random
 import colorful as cf
 
-from setup import Rules
-
 
 class Card:
     def __init__(self, color: str or None, number: int or None, action: str or None):
@@ -108,9 +106,9 @@ def can_play(game: Game, hand: [Card]):
     print("Last Card: [" + last_card.__repr__() + "] \n")
     if "Wild" in [card.action for card in hand]:  # Player has wild card
         return True
-    elif last_card.color in [card.color for card in hand]:  # Matching color card
+    elif last_card.color in [card.color for card in hand] and last_card.color is not None:  # Matching color card
         return True
-    elif last_card.number in [card.number for card in hand]:  # Matching number card
+    elif last_card.number in [card.number for card in hand] and last_card.number is not None:  # Matching number card
         return True
     if last_card.action is not None:
         if "Wild" in last_card.action and game.color in [card.color for card in hand]:  # Last card is Wild
@@ -135,7 +133,7 @@ def perform_card_action(game: Game, player: Player, opponent: Player, card: Card
     if "Wild" in card.action:
         game.color = None
         if player == game.computer:
-            colors = Rules.colors()
+            colors = ["red", "yellow", "green", "blue"]
             matched = False
             while not matched:
                 game.color = random.shuffle(colors)[0]
@@ -175,9 +173,9 @@ def valid_play(game: Game, card: Card):
         return True
 
     last_card: Card = game.pile[-1]
-    if card.color == last_card.color:
+    if card.color == last_card.color and card.color is not None:
         return True
-    elif card.number == last_card.number:
+    elif card.number == last_card.number and card.number is not None:
         return True
     elif card.action is not None:
         if "Wild" in card.action:  # If Wild, choose a color set
@@ -185,7 +183,7 @@ def valid_play(game: Game, card: Card):
         elif card.action == last_card.action:
             return True
     elif last_card.action is not None:
-        if "Wild" in last_card.action and card.color == game.color:
+        if "Wild" in last_card.action and card.color == game.color and card.color is not None:
             return True
         elif card.action == last_card.action:
             return True
