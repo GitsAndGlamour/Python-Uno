@@ -101,14 +101,13 @@ def draw_card(game: Game, player: Player):
 
 def can_play(game: Game, hand: [Card]):
     if len(game.pile) == 0:
-        print("First play")
         return True
     last_card: Card = game.pile[-1]
     print("Last Card: [" + last_card.__repr__() + "] \n")
     if "Wild" in [card.action for card in hand]:  # Player has wild card
         return True
-    elif "Wild" in last_card.action:
-        if game.color in [card.color for card in hand]:  # Last card is Wild and Matching color picked
+    elif last_card.action is not None:
+        if "Wild" in last_card.action and game.color in [card.color for card in hand]:  # Last card is Wild
             return True
     elif last_card.color in [card.color for card in hand]:  # Matching color card
         return True
@@ -124,9 +123,11 @@ def perform_card_action(game: Game, player: Player, opponent: Player, card: Card
     if "Draw 4" in card.action:
         for draw in range(0, 4):
             draw_card(game, opponent)
+        game.active_player = player
     elif "Draw 2" == card.action:
         for draw in range(0, 2):
             draw_card(game, opponent)
+        game.active_player = player
     elif "Skip" == card.action or "Reverse" == card.action:
         game.active_player = player
     if "Wild" in card.action:
@@ -162,10 +163,11 @@ def valid_play(game: Game, card: Card):
         return True
 
     last_card: Card = game.pile[-1]
-    if "Wild" in card.action:  # If Wild, choose a color set
-        return True
-    elif "Wild" in last_card.action:  # If last card is Wild, match chosen color
-        if card.color == game.color:
+    if card.action is not None:
+        if "Wild" in card.action:  # If Wild, choose a color set
+            return True
+    elif last_card.action is not None:
+        if "Wild" in last_card.action and card.color == game.color:
             return True
     elif card.color == last_card.color:
         return True
