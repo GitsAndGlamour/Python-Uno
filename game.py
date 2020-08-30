@@ -132,6 +132,21 @@ def perform_card_action(game: Game, player: Player, opponent: Player, card: Card
             draw_card(game, opponent)
     elif "Skip" == card.action or "Reverse" == card.action:
         game.active_player = player
+    if "Wild" in card.action:
+        color = None
+        while color is None:
+            selected_color = int(input(
+                f"What is the color?\n 1. {cf.red('red')}  2. {cf.yellow('yellow')}  3. {cf.green('green')}  4. {cf.blue('blue')} "))
+            if selected_color == 1:
+                color = 'red'
+            elif selected_color == 2:
+                color = 'yellow'
+            elif selected_color == 3:
+                color = 'green'
+            elif selected_color == 4:
+                color = 'blue'
+            else:
+                print(f"{selected_color} is not a valid response.\n")
 
 
 def play_card(game: Game, player: Player, opponent: Player, card: Card):
@@ -140,3 +155,23 @@ def play_card(game: Game, player: Player, opponent: Player, card: Card):
     game.active_player = opponent
     if card.action is not None:
         perform_card_action(game, player, opponent, card)
+
+
+def valid_play(game: Game, card: Card):
+    if len(game.pile[-1]) == 0:
+        return True
+
+    last_card: Card = game.pile[-1]
+    if "Wild" in card.action:  # If Wild, choose a color set
+        return True
+    elif "Wild" in last_card.action:  # If last card is Wild, match chosen color
+        if card.color == game.color:
+            return True
+    elif card.color == last_card.color:
+        return True
+    elif card.number == last_card.number:
+        return True
+    elif card.action == last_card.action:
+        return True
+    else:
+        return False
