@@ -133,34 +133,38 @@ def perform_card_action(game: Game, player: Player, opponent: Player, card: Card
     elif "Skip" == card.action or "Reverse" == card.action:
         game.active_player = player
     if "Wild" in card.action:
+        selected_color = None
         game.color = None
         if player == game.computer:
             colors = ["red", "yellow", "green", "blue"]
+            shuffled_colors = colors
             matched = False
             while not matched:
-                random.shuffle(colors)
-                game.color = colors[0]
+                random.shuffle(shuffled_colors)
+                game.color = shuffled_colors[0]
                 matched = game.color in [hand_card.color for hand_card in game.computer.hand]
-        while game.color is None:
-            selected_color = int(input(
-                f"What is the color?\n 1. {cf.red('red')} "
-                f"2. {cf.yellow('yellow')}  "
-                f"3. {cf.green('green')}  "
-                f"4. {cf.blue('blue')} "))
-            if selected_color == 1:
-                game.color = 'red'
-                print(f"The color is {cf.red('red')}.")
-            elif selected_color == 2:
-                game.color = 'yellow'
-                print(f"The color is {cf.yellow('yellow')}.")
-            elif selected_color == 3:
-                game.color = 'green'
-                print(f"The color is {cf.green('green')}.")
-            elif selected_color == 4:
-                game.color = 'blue'
-                print(f"The color is {cf.blue('blue')}.")
-            else:
-                print(f"{selected_color} is not a valid response.\n")
+                selected_color = colors.index(shuffled_colors[0]) + 1
+        else:
+            while game.color is None:
+                selected_color = int(input(
+                    f"What is the color?\n 1. {cf.red('red')} "
+                    f"2. {cf.yellow('yellow')}  "
+                    f"3. {cf.green('green')}  "
+                    f"4. {cf.blue('blue')} "))
+        if selected_color == 1:
+            game.color = 'red'
+            print(f"The color is {cf.red('red')}.")
+        elif selected_color == 2:
+            game.color = 'yellow'
+            print(f"The color is {cf.yellow('yellow')}.")
+        elif selected_color == 3:
+            game.color = 'green'
+            print(f"The color is {cf.green('green')}.")
+        elif selected_color == 4:
+            game.color = 'blue'
+            print(f"The color is {cf.blue('blue')}.")
+        else:
+            print(f"{selected_color} is not a valid response.\n")
 
 
 def play_card(game: Game, player: Player, opponent: Player, card: Card):
