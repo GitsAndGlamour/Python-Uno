@@ -106,15 +106,15 @@ def can_play(game: Game, hand: [Card]):
     print("Last Card: [" + last_card.__repr__() + "] \n")
     if "Wild" in [card.action for card in hand]:  # Player has wild card
         return True
+    elif last_card.color in [card.color for card in hand]:  # Matching color card
+        return True
+    elif last_card.number in [card.number for card in hand]:  # Matching number card
+        return True
     if last_card.action is not None:
         if "Wild" in last_card.action and game.color in [card.color for card in hand]:  # Last card is Wild
             return True
         elif last_card.action in [card.action for card in hand] and last_card.action is not None:  # Matching action card
             return True
-    elif last_card.color in [card.color for card in hand]:  # Matching color card
-        return True
-    elif last_card.number in [card.number for card in hand]:  # Matching number card
-        return True
     else:
         return False
 
@@ -163,20 +163,20 @@ def valid_play(game: Game, card: Card):
         return True
 
     last_card: Card = game.pile[-1]
-    if card.action is not None:
+    if card.color == last_card.color:
+        return True
+    elif card.number == last_card.number:
+        return True
+    elif card.action is not None:
         if "Wild" in card.action:  # If Wild, choose a color set
             return True
         elif card.action == last_card.action:
             return True
-    if last_card.action is not None:
+    elif last_card.action is not None:
         if "Wild" in last_card.action and card.color == game.color:
             return True
         elif card.action == last_card.action:
             return True
-    elif card.color == last_card.color:
-        return True
-    elif card.number == last_card.number:
-        return True
     else:
         return False
 
@@ -184,8 +184,8 @@ def valid_play(game: Game, card: Card):
 def computer_turn(game: Game):
     done = False
     while not done:
-        print_hand_count(game.computer.hand)
         play = can_play(game, game.computer.hand)
+        print_hand_count(game.computer.hand)
         if play:
             card: Card = valid_card(game, game.computer.hand)
             play_card(game, game.computer, game.player, card)
@@ -208,8 +208,8 @@ def print_hand_count(hand: [Card]):
 def player_turn(game: Game):
     done = False
     while not done:
-        print_hand(game.player.hand)
         play = can_play(game, game.player.hand)
+        print_hand(game.player.hand)
         if play:
             selected_card: int = int(
                 input(f"Which card would you like to play? [Select 1 - {len(game.player.hand)}]\n"))
