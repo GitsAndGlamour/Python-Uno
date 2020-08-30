@@ -18,6 +18,7 @@ def get_wins(games: [Game]):
 
 
 def run_uno():
+    print("Welcome to Python Uno! \n\n")
     games: [Game] = [new_game()]
     for game in games:
         setup_game(game)
