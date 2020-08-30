@@ -59,6 +59,14 @@ class Game:
         else:
             return None
 
+    def is_uno(self):
+        if len(self.player.hand) == 1:
+            return self.player
+        elif len(self.computer.hand) == 1:
+            return self.computer
+        else:
+            return None
+
 
 def new_game():
     return Game(
@@ -87,6 +95,9 @@ def start_game(game: Game):
             print(f"{winner.name} has won!")
             return
         else:
+            uno = game.is_uno()
+            if uno:
+                print(f"{uno.name} has {cf.red('u')}{cf.blue('n')}{cf.yellow('o')}!")
             if game.active_player.name == game.player.name:
                 player_turn(game)
             else:
