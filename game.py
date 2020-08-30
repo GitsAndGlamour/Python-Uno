@@ -136,7 +136,10 @@ def perform_card_action(game: Game, player: Player, opponent: Player, card: Card
         game.color = None
         if player == game.computer:
             colors = Rules.colors()
-            game.color = random.shuffle(colors)[0]
+            matched = False
+            while not matched:
+                game.color = random.shuffle(colors)[0]
+                matched = game.color in [hand_card.color for hand_card in game.computer.hand]
         while game.color is None:
             selected_color = int(input(
                 f"What is the color?\n 1. {cf.red('red')} "
