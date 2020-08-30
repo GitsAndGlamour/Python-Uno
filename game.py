@@ -1,6 +1,8 @@
 import random
 import colorful as cf
 
+from setup import Rules
+
 
 class Card:
     def __init__(self, color: str or None, number: int or None, action: str or None):
@@ -84,7 +86,7 @@ def start_game(game: Game):
     while winner is None:
         winner = game.is_over()
         if winner is not None:
-            print(f"{winner} has won!")
+            print(f"{winner.name} has won!")
             return
         else:
             if game.active_player.name == game.player.name:
@@ -113,7 +115,7 @@ def can_play(game: Game, hand: [Card]):
     if last_card.action is not None:
         if "Wild" in last_card.action and game.color in [card.color for card in hand]:  # Last card is Wild
             return True
-        elif last_card.action in [card.action for card in hand] and last_card.action is not None:  # Matching action card
+        elif last_card.action in [card.action for card in hand]:  # Matching action card
             return True
     else:
         return False
@@ -131,21 +133,28 @@ def perform_card_action(game: Game, player: Player, opponent: Player, card: Card
     elif "Skip" == card.action or "Reverse" == card.action:
         game.active_player = player
     if "Wild" in card.action:
-        color = None
-        while color is None:
+        game.color = None
+        if player == game.computer:
+            colors = Rules.colors()
+            game.color = random.shuffle(colors)[0]
+        while game.color is None:
             selected_color = int(input(
                 f"What is the color?\n 1. {cf.red('red')} "
                 f"2. {cf.yellow('yellow')}  "
                 f"3. {cf.green('green')}  "
                 f"4. {cf.blue('blue')} "))
             if selected_color == 1:
-                color = 'red'
+                game.color = 'red'
+                print(f"The color is {cf.red('red')}.")
             elif selected_color == 2:
-                color = 'yellow'
+                game.color = 'yellow'
+                print(f"The color is {cf.yellow('yellow')}.")
             elif selected_color == 3:
-                color = 'green'
+                game.color = 'green'
+                print(f"The color is {cf.green('green')}.")
             elif selected_color == 4:
-                color = 'blue'
+                game.color = 'blue'
+                print(f"The color is {cf.blue('blue')}.")
             else:
                 print(f"{selected_color} is not a valid response.\n")
 
