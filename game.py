@@ -1,9 +1,6 @@
 import random
 import colorful as cf
 
-from computer import computer_turn
-from player import player_turn
-
 
 class Card:
     def __init__(self, color: str or None, number: int or None, action: str or None):
@@ -57,7 +54,7 @@ class Game:
     def is_over(self):
         if len(self.player.hand) == 0:
             return self.player
-        elif len(self.computer.hand) ==0:
+        elif len(self.computer.hand) == 0:
             return self.computer
         else:
             return None
@@ -136,7 +133,10 @@ def perform_card_action(game: Game, player: Player, opponent: Player, card: Card
         color = None
         while color is None:
             selected_color = int(input(
-                f"What is the color?\n 1. {cf.red('red')}  2. {cf.yellow('yellow')}  3. {cf.green('green')}  4. {cf.blue('blue')} "))
+                f"What is the color?\n 1. {cf.red('red')} "
+                f"2. {cf.yellow('yellow')}  "
+                f"3. {cf.green('green')}  "
+                f"4. {cf.blue('blue')} "))
             if selected_color == 1:
                 color = 'red'
             elif selected_color == 2:
@@ -175,3 +175,56 @@ def valid_play(game: Game, card: Card):
         return True
     else:
         return False
+
+
+def computer_turn(game: Game):
+    done = False
+    while not done:
+        print_hand_count(game.computer.hand)
+        play = can_play(game, game.computer.hand)
+        if play:
+            card: Card = valid_card(game, game.computer.hand)
+            play_card(game, game.computer, game.player, card)
+            done = True
+        else:
+            print("Computer is drawing a card...")
+            draw_card(game, game.computer)
+
+
+def valid_card(game: Game, hand: [Card]):
+    for card in hand:
+        if valid_play(game, card):
+            return card
+
+
+def print_hand_count(hand: [Card]):
+    print(f"Computer has {len(hand)} cards.")
+
+
+def player_turn(game: Game):
+    done = False
+    while not done:
+        print_hand(game.player.hand)
+        play = can_play(game, game.player.hand)
+        if play:
+            selected_card: int = int(
+                input(f"Which card would you like to play? [Select 1 - {len(game.player.hand)}]\n"))
+            if selected_card in range(1, len(game.player.hand + 1)):
+                card: Card = game.player.hand[selected_card - 1]
+                if valid_play(game, card):
+                    play_card(game, game.player, game.computer, card)
+                    done = True
+                else:
+                    print(f"{card.__repr__()} is not a valid play. Please try again.\n")
+            else:
+                print(f"Uh oh! {selected_card} is not a valid selection.\n")
+        else:
+            input("Looks like you don't have any cards you can play. Please press Enter to continue.\n")
+            draw_card(game, game.player)
+
+
+def print_hand(hand: [Card]):
+    hand_display: [str] = ""
+    for index, card in enumerate(hand):
+        hand_display += (f"{index + 1}: [" + card.__repr__() + "] ")
+    print(hand_display + "\n")
