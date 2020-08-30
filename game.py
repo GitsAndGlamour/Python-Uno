@@ -158,7 +158,7 @@ def play_card(game: Game, player: Player, opponent: Player, card: Card):
 
 
 def valid_play(game: Game, card: Card):
-    if len(game.pile[-1]) == 0:
+    if len(game.pile) == 0:
         return True
 
     last_card: Card = game.pile[-1]
